@@ -1,10 +1,16 @@
 import { ObjectId } from 'mongodb';
 
+const crypto = require('crypto');
 const redisClient = require('../utils/redis');
 const dbClient = require('../utils/db');
-const crypto = require('crypto');
 
-class UserController {
+function cryptPassword(password) {
+  const hash = crypto.createHash('sha1');
+  const hashedPW = hash.update(password, 'utf-8');
+  return hashedPW.disgest('hex');
+}
+
+class UsersController {
   static async postNew(request, response) {
     const { email } = request.body;
     const { password } = request.body;
@@ -12,14 +18,16 @@ class UserController {
 
     if (!email) {
       return (response.status(400).json({ error: 'Missing email' }));
-    } else if (!password) {
+    }
+    if (!password) {
       return (response.status(400).json({ error: 'Missing password' }));
-    } else if (existsData.length) {
+    }
+    if (existsData.length) {
       return (response.status(400).json({ error: 'Already exist' }));
     }
 
     const hashedPW = cryptPassword(password);
-    const user = await dbClient.db.collection('users').insertOne({ email, password: hashedPW});
+    const user = await dbClient.db.collection('users').insertOne({ email, password: hashedPW });
     const resData = { id: user.ops[0]._id, email: user.ops[0].email };
 
     return (response.status(201).json(resData));
@@ -39,10 +47,4 @@ class UserController {
   }
 }
 
-function cryptPassword(password) {
-  const hash = crypto.createHash('sha1');
-  const hashedPW = hash.update(password, 'utf-8');
-  return hashedPW.disgest('hex');
-}
-
-module.exports = UserController;
+module.exports = UsersController;
