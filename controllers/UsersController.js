@@ -7,7 +7,7 @@ const dbClient = require('../utils/db');
 function cryptPassword(password) {
   const hash = crypto.createHash('sha1');
   const hashedPW = hash.update(password, 'utf-8');
-  return hashedPW.disgest('hex');
+  return (hashedPW.disgest('hex'));
 }
 
 class UsersController {
