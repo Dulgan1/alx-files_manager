@@ -159,7 +159,7 @@ class FilesController {
       userId: user._id,
       parentId: parentId === ROOT_FOLDER_ID.toString()
         ? parentId
---        : new mongoDBCore.BSON.ObjectId(isValidId(parentId) ? parentId : NULL_ID),
+        : new mongoDBCore.BSON.ObjectId(isValidId(parentId) ? parentId : NULL_ID),
     };
 
     const files = await (await (await dbClient.filesCollection())
