@@ -18,20 +18,24 @@ class UsersController {
     const existsData = await dbClient.db.collection('users').find({ email }).toArray();
 
     if (!email) {
-      return (response.status(400).json({ error: 'Missing email' }));
+      response.status(400).json({ error: 'Missing email' });
+      return;
     }
     if (!password) {
-      return (response.status(400).json({ error: 'Missing password' }));
+      response.status(400).json({ error: 'Missing password' });
+      return;
     }
     if (existsData.length) {
-      return (response.status(400).json({ error: 'Already exist' }));
+      response.status(400).json({ error: 'Already exist' });
+      return;
     }
 
     const hashedPW = cryptPassword(password);
-    const user = await dbClient.db.collection('users').insertOne({ email, password: hashedPW });
-    const resData = { id: user.ops[0]._id, email: user.ops[0].email };
+    const user = await (await dbClient.db.collection('users')).insertOne({ email, password: hashedPW });
+    const userId = user.insertionId.toString();
+    const resData = { email, id: userId };
 
-    return (response.status(201).json(resData));
+    response.status(201).json(resData);
   }
 
   static async getMe(request, response) {
