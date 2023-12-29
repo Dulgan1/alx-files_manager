@@ -6,7 +6,7 @@ import {
   mkdir, writeFile, stat, existsSync, realpath,
 } from 'fs';
 import { join as joinPath } from 'path';
-// import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { contentType } from 'mime-types';
 import mongoDBCore from 'mongodb/lib/core';
 import dbClient from '../utils/db';
@@ -49,7 +49,7 @@ const isValidId = (id) => {
   return true;
 };
 
-class FilesController {
+export default class FilesController {
   static async postUpload(req, res) {
     const { user } = req;
     const name = req.body ? req.body.name : null;
@@ -281,5 +281,3 @@ class FilesController {
     res.status(200).sendFile(absoluteFilePath);
   }
 }
-
-module.exports = FilesController;
